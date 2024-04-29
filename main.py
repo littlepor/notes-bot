@@ -1,13 +1,14 @@
 import os
 import time
+from datetime import datetime, timedelta
 from instagrapi import Client
 
 # Instagram credentials
-USERNAME = "your_username"
-PASSWORD = "your_psswd"
+USERNAME = "lapo_6090"
+PASSWORD = "thitiyakorn2561"
 
 # Constants
-BASE_MINUTE_INTERVAL = 15
+BASE_MINUTE_INTERVAL = 1  # Change interval to 1 minute
 NOTE_CONTROL = 0.5
 MAX_EMOJI_INDEX = 23
 
@@ -26,12 +27,12 @@ def round_to_base(number, base, control):
     return rounded
 
 def get_time_data():
-    current_time = time.localtime()
+    seasia_time = datetime.utcnow() + timedelta(hours=7)  # Adding 7 hours for SEASIA time zone
     clock_emojis = ['🕐', '🕜', '🕑', '🕝', '🕒', '🕞', '🕓', '🕟', '🕔', '🕠', '🕕', '🕡',
                     '🕖', '🕢', '🕗', '🕣', '🕘', '🕤', '🕙', '🕥', '🕚', '🕦', '🕛', '🕧']
 
-    time_min = int(time.strftime("%M"))
-    time_hr = int(time.strftime("%I", current_time).lstrip('0'))
+    time_min = seasia_time.minute
+    time_hr = seasia_time.hour
 
     if time_min < 23:
         quarter = 0
@@ -71,8 +72,6 @@ else:
     generate_cookie(USERNAME, PASSWORD)
     print("Cookies generated")
 
-previous_note_text = None
-
 while True:
     hr, min, emoji = get_time_data()
     rounded_min = round_to_base(min, base=BASE_MINUTE_INTERVAL, control=NOTE_CONTROL)
@@ -81,10 +80,7 @@ while True:
         rounded_min = "00"
         hr += 1
 
-    note_text = f'Time is almost {emoji} {hr}:{rounded_min}. Are you still here?'
+    note_text = f'ตอนนี้{emoji} {hr}:{rounded_min} แล้วนะ'
     
-    if previous_note_text != note_text:
-        print(send_note(note_text))
-        previous_note_text = note_text
-    else:
-        countdown(100)
+    print(send_note(note_text))
+    countdown(60)  # Change countdown to 60 seconds for each minute
